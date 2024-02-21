@@ -16,10 +16,10 @@ public class ExpressionDriver {
             variables.put("d", promptForValue("d", scanner));
 
             // Direct computation after substitution for infix
-//            double infixResult = (variables.get("a") + variables.get("b")) * (variables.get("c") + variables.get("d"));
-//            System.out.println("Value of infix expression (a+b)*(c+d) with a = " + variables.get("a") +
-//                    ", b = " + variables.get("b") + ", c = " + variables.get("c") + ", d = " + variables.get("d") +
-//                    " is " + infixResult);
+            double infixResult = (variables.get("a") + variables.get("b")) * (variables.get("c") + variables.get("d"));
+            System.out.println("Value of infix expression (a+b)*(c+d) with a = " + variables.get("a") +
+                    ", b = " + variables.get("b") + ", c = " + variables.get("c") + ", d = " + variables.get("d") +
+                    " is " + infixResult);
 
 //            double InfixResult = InfixEvaluator.evaluateInfix(variables);
 //            System.out.println("Value of infix expression ab+cd+* with a = " + variables.get("a") +

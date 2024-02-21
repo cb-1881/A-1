@@ -89,7 +89,6 @@ public boolean contains(E anEntry) {
 
 @Override
 public E[] toArray() {
-    // Suppress unchecked cast warnings, as this is an inherent issue with generic arrays in Java
     @SuppressWarnings("unchecked")
     E[] result = (E[])new Object[length]; // This will cause an unchecked cast warning
     int index = 0;
@@ -143,7 +142,7 @@ public E replace(int givenPosition, E newEntry) {
         throw new IndexOutOfBoundsException("Illegal position given to replace operation.");
     }
 }
-
+// i hated this
 @Override
 public E remove(int givenPosition) {
     if ((givenPosition >= 1) && (givenPosition <= length)) {
@@ -167,6 +166,4 @@ public E remove(int givenPosition) {
     }
 }
 
-
-    // Implement other methods from ListInterface...
 }

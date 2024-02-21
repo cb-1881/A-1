@@ -6,6 +6,7 @@ public class TestLinkedListWithIterator {
         myList.add("First");
         myList.add("Second");
         myList.add("Third");
+        System.out.println("testing remove... Should remove 'First'");
         myList.remove(1);
         Iterator<String> iterator = myList.getIterator();
         while (iterator.hasNext()) {
