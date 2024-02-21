@@ -5,7 +5,8 @@ import java.util.Scanner;
 public class PostFixEvaluator {
 
     public static double evaluatePostfix(Map<String, Double> variables) {
-        String postfix = "ab+cd+*"; // Assuming a simplified representation for demonstration
+        String postfix = "ac-b^d+"; // Corrected: Use standard hyphen-minus for subtraction
+
         Stack<Double> stack = new Stack<>();
 
         for (char c : postfix.toCharArray()) {

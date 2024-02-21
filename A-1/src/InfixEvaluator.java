@@ -1,64 +1,75 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 public class InfixEvaluator {
-    // Method to evaluate the infix expression
-    public static int evaluateInfix(String expression) {
-        // Stack for numbers: 'valueStack'
-        Stack<Integer> valueStack = new Stack<>();
 
-        // Stack for Operators: 'operatorStack'
-        Stack<Character> operatorStack = new Stack<>();
+    // Evaluates the value of an infix expression with variables
+    public static double evaluateInfix(String expression, Map<String, Double> variables) {
+        Stack<Double> values = new Stack<>();
+        Stack<Character> ops = new Stack<>();
 
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
 
-            // If the scanned character is a whitespace, skip it
-            if (c == ' ')
-                continue;
+            // Skip whitespace
+            if (c == ' ') continue;
 
-            // If the scanned character is a digit, read the number and push it to valueStack
-            if (Character.isDigit(c)) {
-                int num = 0;
-                while (Character.isDigit(c)) {
-                    num = num * 10 + (c - '0');
-                    i++;
-                    if (i < expression.length())
-                        c = expression.charAt(i);
-                    else
-                        break;
+            // If char is a digit or variable, parse and push to values stack
+            if (Character.isDigit(c) || Character.isLetter(c)) {
+                StringBuilder sb = new StringBuilder();
+                while (i < expression.length() && (Character.isDigit(expression.charAt(i)) || Character.isLetter(expression.charAt(i)) || expression.charAt(i) == '.')) {
+                    sb.append(expression.charAt(i++));
                 }
-                i--; // since the for loop also increases i
-                valueStack.push(num);
+                i--;
+
+                // Push variable value or number directly
+                double value = Character.isLetter(sb.charAt(0)) ? variables.get(sb.toString()) : Double.parseDouble(sb.toString());
+                values.push(value);
             }
-            // If the scanned character is '(', push it to operatorStack
+            // Opening bracket, push to ops
             else if (c == '(') {
-                operatorStack.push(c);
+                ops.push(c);
             }
-            // If the scanned character is ')', solve the entire bracket
+            // Closing bracket, solve entire bracket
             else if (c == ')') {
-                while (operatorStack.peek() != '(')
-                    valueStack.push(applyOp(operatorStack.pop(), valueStack.pop(), valueStack.pop()));
-                operatorStack.pop();
+                while (ops.peek() != '(')
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+                ops.pop();
             }
-            // If the scanned character is an operator
-            else if (c == '+' || c == '-' || c == '*' || c == '/') {
-                while (!operatorStack.isEmpty() && hasPrecedence(c, operatorStack.peek()))
-                    valueStack.push(applyOp(operatorStack.pop(), valueStack.pop(), valueStack.pop()));
-                // Push current operator to operatorStack
-                operatorStack.push(c);
+            // Operator
+            else if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^') {
+                // While top of ops has same or greater precedence to current token, which is an operator. Apply operator on top of ops to top two elements in values stack.
+                while (!ops.empty() && hasPrecedence(c, ops.peek()))
+                    values.push(applyOp(ops.pop(), values.pop(), values.pop()));
+
+                // Push current token to ops.
+                ops.push(c);
             }
         }
 
-        // Entire expression has been parsed at this point, apply remaining operators
-        while (!operatorStack.isEmpty())
-            valueStack.push(applyOp(operatorStack.pop(), valueStack.pop(), valueStack.pop()));
+        // Entire expression has been parsed at this point, apply remaining ops to values.
+        while (!ops.empty())
+            values.push(applyOp(ops.pop(), values.pop(), values.pop()));
 
-        // Top of 'valueStack' contains result, return it
-        return valueStack.pop();
+        // Top of 'values' contains result, return it.
+        return values.pop();
     }
 
-    // Method to apply an operator 'op' on operands 'a' and 'b'
-    public static int applyOp(char op, int b, int a) {
+    // Returns true if 'op2' has higher or same precedence as 'op1',
+    // otherwise returns false.
+    public static boolean hasPrecedence(char op1, char op2) {
+        if (op2 == '(' || op2 == ')')
+            return false;
+        if ((op1 == '*' || op1 == '/' || op1 == '^') && (op2 == '+' || op2 == '-'))
+            return true;
+        if (op1 == '^' && (op2 == '*' || op2 == '/' || op2 == '^'))
+            return false; // '^' is right associative
+        return !(op1 == '+' || op1 == '-') || (op2 != '+' && op2 != '-');
+    }
+
+    // A utility method to apply an operation 'op' on operands 'a' and 'b'.
+    public static double applyOp(char op, double b, double a) {
         switch (op) {
             case '+':
                 return a + b;
@@ -67,45 +78,28 @@ public class InfixEvaluator {
             case '*':
                 return a * b;
             case '/':
-                if (b == 0)
-                    throw new UnsupportedOperationException("Cannot divide by zero");
+                if (b == 0) throw new UnsupportedOperationException("Cannot divide by zero");
                 return a / b;
+            case '^':
+                return Math.pow(a, b);
+            default:
+                throw new IllegalArgumentException("Unsupported operator " + op);
         }
-        return 0;
     }
 
-
-    /*NOTES
-    *
-Infix Expression Evaluation
-The parts of the expression surrounded by opening brace and closing brace must be calculated first.
-Next, operator 'of' should be processed.
-Next process division and multiplication. ...
-Next comes Addition and Subtraction.
-    * */
-    // Method to return precedence of operators; higher returned value means higher precedence
-    public static boolean hasPrecedence(char op1, char op2) {
-        if (op2 == '(' || op2 == ')')
-            return false;
-        if ((op1 == '*' || op1 == '/') && (op2 == '+' || op2 == '-'))
-            return false;
-        else
-            return true;
-    }
-
-    // Main method to test the evaluateInfix method
     public static void main(String[] args) {
-        String expression = "10 + 2 * 6";
-        System.out.println(evaluateInfix(expression));
+        String expression = "a+b*(c^d-e)";
+        Map<String, Double> variables = new HashMap<>();
+        variables.put("a", 3.0);
+        variables.put("b", 5.0);
+        variables.put("c", 2.0);
+        variables.put("d", 3.0);
+        variables.put("e", 6.0);
+        variables.put("f", 1.5);
+        variables.put("g", 4.0);
+        variables.put("h", 5.0);
+        variables.put("i", 100.0);
 
-        expression = "100 * 2 + 12";
-        System.out.println(evaluateInfix(expression));
-
-        expression = "100 * ( 2 + 12 )";
-        System.out.println(evaluateInfix(expression));
-
-        expression = "100 * ( 2 + 12 ) / 14";
-        System.out.println(evaluateInfix(expression));
+        System.out.println(evaluateInfix(expression, variables));
     }
 }
-

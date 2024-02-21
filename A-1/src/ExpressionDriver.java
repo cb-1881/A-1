@@ -21,6 +21,10 @@ public class ExpressionDriver {
 //                    ", b = " + variables.get("b") + ", c = " + variables.get("c") + ", d = " + variables.get("d") +
 //                    " is " + infixResult);
 
+//            double InfixResult = InfixEvaluator.evaluateInfix(variables);
+//            System.out.println("Value of infix expression ab+cd+* with a = " + variables.get("a") +
+//                    ", b = " + variables.get("b") + ", c = " + variables.get("c") + ", d = " + variables.get("d") +
+//                    " is " + postfixResult);
             // Stack-based evaluation for postfix with additional operations
             double postfixResult = PostFixEvaluator.evaluatePostfix(variables);
             System.out.println("Value of postfix expression ab+cd+* with a = " + variables.get("a") +
