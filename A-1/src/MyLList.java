@@ -87,19 +87,21 @@ public boolean contains(E anEntry) {
     return false;
 }
 
-@Override
-public E[] toArray() {
-    @SuppressWarnings("unchecked")
-    E[] result = (E[])new Object[length]; // This will cause an unchecked cast warning
-    int index = 0;
-    Node<E> currentNode = firstNode;
-    while (currentNode != null) {
-        result[index] = currentNode.data;
-        currentNode = currentNode.next;
-        index++;
+    @Override
+    public E[] toArray() {
+        // Assuming E extends Comparable<E>, you can create an array like this:
+        @SuppressWarnings("unchecked")
+        E[] result = (E[])java.lang.reflect.Array.newInstance(Comparable.class, length);
+
+        int index = 0;
+        Node<E> currentNode = firstNode;
+        while (currentNode != null) {
+            result[index++] = currentNode.data;
+            currentNode = currentNode.next;
+        }
+        return result;
     }
-    return result;
-}
+
 
 
     // Additional methods like remove(), clear(), getEntry() etc. follow similar patterns
