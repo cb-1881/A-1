@@ -9,7 +9,7 @@ HAMCREST_JAR := lib/hamcrest-core-2.2.jar
 
 # Main class to run
 MAIN_CLASS := ExpressionDriver
-
+LINKEDLIST := Driver
 # Find all Java files in the src directory
 SOURCES := $(shell find $(SRC_DIR) -name '*.java')
 
@@ -30,6 +30,9 @@ run:
 # Clean the classes directory
 clean:
 	@rm -rf $(CLASS_DIR)/*
+
+LinkedList:
+	@java -cp $(CLASSPATH) $(LINKEDLIST)
 
 ## Test LinkedList
 #LinkedListTest:
